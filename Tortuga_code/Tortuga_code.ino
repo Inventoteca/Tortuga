@@ -7,6 +7,7 @@
 #define NEUTRAL              2048  //1900
 #define HISTERESIS           100
 #define MINPWM               100
+#define VUELTACOMPLETA       200
 
 int pwm_y, pwm_x;
 
@@ -26,10 +27,14 @@ void loop() {
   int x = analogRead(36); // Valor analógico del eje x del joystick
   int y = analogRead(32); // Valor analógico del eje y del joystick
 
+  //Map pwm eje x y y
   pwm_y=map(y,4095,0,-255,255);
   pwm_x=map(x,0,4095,-255,255);
+
+  Serial.print("Valor X: ");
   Serial.print(x);
   Serial.print("\t");
+  Serial.print("Valor Y: ");
   Serial.print(y);
   Serial.print("\t");
   Serial.print(pwm_x);
@@ -40,42 +45,77 @@ void loop() {
   if (y<= (NEUTRAL- HISTERESIS))
   {
     digitalWrite(MOTOR_IZQUIERDA_E,HIGH); //Se habilita
-    if(abs(pwm_y) > 100){
+    if(abs(pwm_y) > MINPWM){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_y));
       analogWrite(MOTOR_DERECHA_B,abs(pwm_y));
       analogWrite(MOTOR_IZQUIERDA_A,abs(pwm_y));
     }
-    Serial.print("Atras");
     Serial.print("\t");
+    Serial.print("Atras");
   }
   else if (y>= (NEUTRAL+ HISTERESIS))
   { 
-    Serial.print("Adelante");
-    if(abs(pwm_y) > 100){
+    if(abs(pwm_y) > MINPWM){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_y));
       analogWrite(MOTOR_DERECHA_A,abs(pwm_y));
       analogWrite(MOTOR_IZQUIERDA_B,abs(pwm_y));
     }
     Serial.print("\t");
+    Serial.print("Adelante");
   }
   else if (x>= (NEUTRAL + HISTERESIS))
   {
-    Serial.print("Izquierda");
-    Serial.print("\t");
+    //Serial.print("Izquierda");
+    if(abs(pwm_x) > MINPWM && abs(pwm_x) < VUELTACOMPLETA){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_x));
+      analogWrite(MOTOR_DERECHA_A,0);
+      analogWrite(MOTOR_IZQUIERDA_B,abs(pwm_x));
+      Serial.print("\t");
+      Serial.print("Izquierda");
+    }
+    else if(abs(pwm_x) > VUELTACOMPLETA){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_x));
+      analogWrite(MOTOR_IZQUIERDA_A,abs(pwm_x));
+      analogWrite(MOTOR_IZQUIERDA_B,abs(pwm_x));
+      Serial.print("\t");
+      Serial.print("Izquierda Completa");
+    }
   }
   else if (x<= (NEUTRAL - HISTERESIS))
   {
-    Serial.print("Derecha");
-    Serial.print("\t");
+    //Serial.print("Derecha");
+    if(abs(pwm_x) > MINPWM && abs(pwm_x) < VUELTACOMPLETA){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_x));
+      analogWrite(MOTOR_DERECHA_A,abs(pwm_x));
+      analogWrite(MOTOR_IZQUIERDA_B,0);
+      Serial.print("\t");
+      Serial.print("Derecha");
+    }
+    else if(abs(pwm_x) > VUELTACOMPLETA){
+      Serial.print("Vel_Motores: ");
+      Serial.print(abs(pwm_x));
+      analogWrite(MOTOR_DERECHA_A,abs(pwm_x));
+      analogWrite(MOTOR_DERECHA_B,abs(pwm_x));
+      Serial.print("\t");
+      Serial.print("Derecha Completa");
+    }
     }
   else
   {
-    Serial.print("Detener");
+    Serial.print("Vel_Motores: ");
+    Serial.print(abs(pwm_y + pwm_x));
+    Serial.print("\t");
     analogWrite(MOTOR_DERECHA_A,0);
     analogWrite(MOTOR_DERECHA_B,0);
     analogWrite(MOTOR_IZQUIERDA_A,0);
     analogWrite(MOTOR_IZQUIERDA_B,0);
-    Serial.print("\t");
+    Serial.print("Detener");
   }
-
   Serial.print("\n");
 
 
