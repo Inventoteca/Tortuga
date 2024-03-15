@@ -27,6 +27,9 @@ void loop() {
   int x = analogRead(36); // Valor analógico del eje x del joystick
   int y = analogRead(32); // Valor analógico del eje y del joystick
 
+  digitalWrite(MOTOR_IZQUIERDA_E, HIGH);
+  digitalWrite(MOTOR_DERECHA_E, HIGH);
+
   //Map pwm eje x y y
   pwm_y=map(y,4095,0,-255,255);
   pwm_x=map(x,0,4095,-255,255);
