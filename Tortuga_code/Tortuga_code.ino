@@ -1,21 +1,28 @@
 // vamos a trabajar con el dht22
+#include "DHT.h"
+
 
 #define MOTOR_DERECHA_A      12  //Izquierdo
 #define MOTOR_DERECHA_B      13  //Derecho
 #define MOTOR_DERECHA_E      14
 #define MOTOR_IZQUIERDA_A    15  //Izquierdo
 #define MOTOR_IZQUIERDA_B    18  //Derecho
-#define MOTOR_IZQUIERDA_E    19 
+#define MOTOR_IZQUIERDA_E    19
+#define DHTPIN               25     // Digital pin connected to the DHT sensor
+#define DHTTYPE              DHT22   // DHT 22  (AM2302), AM2321
 #define NEUTRAL              2048  //1900
 #define HISTERESIS           100
 #define MINPWM               100
 #define VUELTACOMPLETA       200
 
 int pwm_y, pwm_x;
+DHT dht(DHTPIN, DHTTYPE);
 
 void setup() {
   Serial.begin(115200);
   Serial.println("TORTUGA V1");
+  dht.begin();
+  Serial.println(F("DHTxx test!"));
 
   pinMode(MOTOR_DERECHA_A, OUTPUT);
   pinMode(MOTOR_DERECHA_B, OUTPUT);
@@ -26,6 +33,19 @@ void setup() {
 }
 
 void loop() {
+ 
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(t)) {
+    Serial.println(F("Failed to read from DHT sensor!"));
+    return;
+  }
+
+  Serial.print(F("%  Temperature: "));
+  Serial.print(t);
+  Serial.print(F("°C "));
+  
   int x = analogRead(36); // Valor analógico del eje x del joystick
   int y = analogRead(32); // Valor analógico del eje y del joystick
 
