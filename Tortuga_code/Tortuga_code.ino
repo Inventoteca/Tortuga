@@ -1,3 +1,5 @@
+// vamos a trabajar con el dht22
+
 #define MOTOR_DERECHA_A      12  //Izquierdo
 #define MOTOR_DERECHA_B      13  //Derecho
 #define MOTOR_DERECHA_E      14
